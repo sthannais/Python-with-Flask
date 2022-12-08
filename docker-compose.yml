@@ -1,0 +1,28 @@
+version: "3.7"
+services:
+  data:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: "test"
+      MYSQL_PASSWORD: "root"
+      MYSQL_ROOT_PASSWORD: "root"
+    ports:
+      - "3309:3306"
+    volumes:
+      - ./init_test.sql:/docker-entrypoint-initdb.d/init_test.sql
+      - my-db:/var/lib/mysql
+  python_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 6000:6000
+    depends_on:
+      - data
+    tty: true
+volumes:
+  my-db:
+networks:
+  default:
+    name: servermysql
